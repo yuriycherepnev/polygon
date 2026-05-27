@@ -5,6 +5,7 @@ import (
 	"sync"
 )
 
+// решение в помощью channels - самое быстрое
 type FooBar struct {
 	n   int
 	chn chan struct{}
@@ -97,40 +98,6 @@ func (fb *FooBar) Bar(printBar func()) {
 		// printBar() outputs "bar". Do not change or remove this line.
 		printBar()
 		fb.isBar.Store(false)
-	}
-}
-*/
-
-// решение в помощью channels
-/*
-type FooBar struct {
-	n   int
-	chn chan int
-}
-
-func NewFooBar(n int) *FooBar {
-	f := &FooBar{
-		n:   n,
-		chn: make(chan int),
-	}
-	return f
-}
-
-func (fb *FooBar) Foo(printFoo func()) {
-	for i := 0; i < fb.n; i++ {
-		// printFoo() outputs "foo". Do not change or remove this line.
-		printFoo()
-		fb.chn <- 0
-		<-fb.chn
-	}
-}
-
-func (fb *FooBar) Bar(printBar func()) {
-	for i := 0; i < fb.n; i++ {
-		<-fb.chn
-		// printBar() outputs "bar". Do not change or remove this line.
-		printBar()
-		fb.chn <- 0
 	}
 }
 */
