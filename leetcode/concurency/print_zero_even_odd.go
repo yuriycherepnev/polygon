@@ -36,18 +36,18 @@ func main() {
 
 // решение через каналы
 type ZeroEvenOdd struct {
-	n    int
-	even chan struct{}
-	odd  chan struct{}
-	zero chan struct{}
+	n        int
+	chanEven chan struct{}
+	chanOdd  chan struct{}
+	chanZero chan struct{}
 }
 
 func NewZeroEvenOdd(n int) *ZeroEvenOdd {
 	zeo := &ZeroEvenOdd{
-		n:    n,
-		odd:  make(chan struct{}),
-		even: make(chan struct{}),
-		zero: make(chan struct{}),
+		n:        n,
+		chanOdd:  make(chan struct{}),
+		chanEven: make(chan struct{}),
+		chanZero: make(chan struct{}),
 	}
 	return zeo
 }
@@ -56,20 +56,20 @@ func (z *ZeroEvenOdd) Zero(printNumber func(int)) {
 	for i := 1; i <= z.n; i++ {
 		printNumber(0)
 		if i%2 != 0 {
-			z.odd <- struct{}{}
+			z.chanOdd <- struct{}{}
 		} else {
-			z.even <- struct{}{}
+			z.chanEven <- struct{}{}
 		}
-		<-z.zero
+		<-z.chanZero
 	}
 }
 
 func (z *ZeroEvenOdd) Odd(printNumber func(int)) {
 	for i := 1; i <= z.n; i++ {
 		if i%2 != 0 {
-			<-z.odd
+			<-z.chanOdd
 			printNumber(i)
-			z.zero <- struct{}{}
+			z.chanZero <- struct{}{}
 		}
 	}
 }
@@ -77,9 +77,9 @@ func (z *ZeroEvenOdd) Odd(printNumber func(int)) {
 func (z *ZeroEvenOdd) Even(printNumber func(int)) {
 	for i := 1; i <= z.n; i++ {
 		if i%2 == 0 {
-			<-z.even
+			<-z.chanEven
 			printNumber(i)
-			z.zero <- struct{}{}
+			z.chanZero <- struct{}{}
 		}
 	}
 }
