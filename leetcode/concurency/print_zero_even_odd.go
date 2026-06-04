@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	evenOdd := NewZeroEvenOdd(3)
+	evenOdd := NewZeroEvenOdd(4)
 	wg := sync.WaitGroup{}
 
 	printZero := func(n int) { fmt.Print(n) }
@@ -31,11 +31,61 @@ func main() {
 	}()
 
 	wg.Wait()
-
 	fmt.Println()
-
 }
 
+// решение через каналы
+type ZeroEvenOdd struct {
+	n    int
+	even chan struct{}
+	odd  chan struct{}
+	zero chan struct{}
+}
+
+func NewZeroEvenOdd(n int) *ZeroEvenOdd {
+	zeo := &ZeroEvenOdd{
+		n:    n,
+		odd:  make(chan struct{}),
+		even: make(chan struct{}),
+		zero: make(chan struct{}),
+	}
+	return zeo
+}
+
+func (z *ZeroEvenOdd) Zero(printNumber func(int)) {
+	for i := 1; i <= z.n; i++ {
+		printNumber(0)
+		if i%2 != 0 {
+			z.odd <- struct{}{}
+		} else {
+			z.even <- struct{}{}
+		}
+		<-z.zero
+	}
+}
+
+func (z *ZeroEvenOdd) Odd(printNumber func(int)) {
+	for i := 1; i <= z.n; i++ {
+		if i%2 != 0 {
+			<-z.odd
+			printNumber(i)
+			z.zero <- struct{}{}
+		}
+	}
+}
+
+func (z *ZeroEvenOdd) Even(printNumber func(int)) {
+	for i := 1; i <= z.n; i++ {
+		if i%2 == 0 {
+			<-z.even
+			printNumber(i)
+			z.zero <- struct{}{}
+		}
+	}
+}
+
+// решение через waitGroup
+/*
 type ZeroEvenOdd struct {
 	n    int
 	zero sync.WaitGroup
@@ -86,3 +136,4 @@ func (z *ZeroEvenOdd) Even(printNumber func(int)) {
 		z.odd.Add(1)
 	}
 }
+*/
