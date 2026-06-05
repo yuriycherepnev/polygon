@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	water := "OOOHHH"
+	water := "OHOOHOHHHHOHHOHHHH"
 	h2o := NewH2O()
 	var wg sync.WaitGroup
 	for _, ch := range water {
@@ -26,36 +26,36 @@ func main() {
 		}
 	}
 	wg.Wait()
+
+	fmt.Println()
 }
 
 type H2O struct {
-	wgHydrogen sync.WaitGroup
-	wgOxygen   sync.WaitGroup
-	counter    atomic.Int32
+	hCh     chan struct{}
+	oCh     chan struct{}
+	counter atomic.Int32
 }
 
 func NewH2O() *H2O {
 	h := &H2O{
-		wgHydrogen: sync.WaitGroup{},
-		wgOxygen:   sync.WaitGroup{},
-		counter:    atomic.Int32{},
+		hCh: make(chan struct{}, 2),
+		oCh: make(chan struct{}, 2),
 	}
-	h.wgHydrogen.Add(1)
+	h.oCh <- struct{}{}
 	return h
 }
 
 func (h *H2O) Hydrogen(releaseHydrogen func()) {
-	h.wgHydrogen.Wait()
+	<-h.hCh
 	// releaseHydrogen() outputs "H". Do not change or remove this line.
 	releaseHydrogen()
-	h.wgOxygen.Done()
-	h.wgHydrogen.Add(1)
+	h.oCh <- struct{}{}
 }
 
 func (h *H2O) Oxygen(releaseOxygen func()) {
-	h.wgOxygen.Wait()
+	<-h.oCh
 	// releaseOxygen() outputs "H". Do not change or remove this line.
 	releaseOxygen()
-	h.wgOxygen.Add(1)
-	h.wgHydrogen.Done()
+	h.hCh <- struct{}{}
+	h.hCh <- struct{}{}
 }
