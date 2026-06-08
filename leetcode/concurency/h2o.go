@@ -49,7 +49,6 @@ func (h *H2O) Hydrogen(releaseHydrogen func()) {
 	<-h.hCh
 	// releaseHydrogen() outputs "H". Do not change or remove this line.
 	releaseHydrogen()
-	h.oCh <- struct{}{}
 }
 
 func (h *H2O) Oxygen(releaseOxygen func()) {
@@ -58,4 +57,6 @@ func (h *H2O) Oxygen(releaseOxygen func()) {
 	releaseOxygen()
 	h.hCh <- struct{}{}
 	h.hCh <- struct{}{}
+
+	h.oCh <- struct{}{}
 }
