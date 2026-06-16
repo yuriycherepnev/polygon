@@ -1,11 +1,7 @@
 package main
 
-import (
-	"fmt"
-	"sync"
-	"sync/atomic"
-)
-
+// решение через sync cond
+/*
 func main() {
 	water := "OHHOOOHOHHHHHHH"
 	h2o := NewH2O()
@@ -75,3 +71,4 @@ func (h *H2O) Oxygen(releaseOxygen func()) {
 
 	h.oCh <- struct{}{}
 }
+*/
