@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-// решение на каналах
+// решение на wg + channels
 func randomWaitCh(wg *sync.WaitGroup, workChan chan int) {
 	defer wg.Done()
 	workSeconds := rand.Intn(9)

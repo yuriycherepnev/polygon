@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-// решение через mutex
+// решение через wg + mutex
 func randomWait() int {
 	workSeconds := rand.Intn(9)
 	time.Sleep(time.Duration(workSeconds) * time.Second)
@@ -21,7 +21,6 @@ func main() {
 	mainSeconds := 0
 	totalWorkSeconds := 0
 	start := time.Now()
-
 	wg := sync.WaitGroup{}
 	mutex := sync.Mutex{}
 
