@@ -5,6 +5,8 @@
 package main
 
 import (
+	"context"
+	"fmt"
 	"math/rand"
 	"time"
 )
@@ -13,20 +15,25 @@ func randomTimeWork() {
 	time.Sleep(time.Duration(rand.Intn(100)) * time.Second)
 }
 
-func predictableTimeWork() {
-	ch := make(chan struct{})
-
+func predictableTimeWork(ctx context.Context) {
 	go func() {
 		randomTimeWork()
-		close(ch)
 	}()
 
-	select {
-	case <-ch:
-	case <-time.After(3 * time.Second):
+	for {
+		select {
+		case <-ctx.Done():
+			fmt.Println("Done")
+			return
+		default:
+			fmt.Println("Working...")
+			time.Sleep(500 * time.Millisecond)
+		}
 	}
 }
 
 func main() {
-	predictableTimeWork()
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	predictableTimeWork(ctx)
 }
