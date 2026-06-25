@@ -15,7 +15,7 @@ func randomTimeWork() {
 	time.Sleep(time.Duration(rand.Intn(100)) * time.Second)
 }
 
-func predictableTimeWork(ctx context.Context) {
+func predictableTimeWork(ctx context.Context) error {
 	go func() {
 		randomTimeWork()
 	}()
@@ -24,7 +24,7 @@ func predictableTimeWork(ctx context.Context) {
 		select {
 		case <-ctx.Done():
 			fmt.Println("Done")
-			return
+			return ctx.Err()
 		default:
 			fmt.Println("Working...")
 			time.Sleep(500 * time.Millisecond)
@@ -35,5 +35,6 @@ func predictableTimeWork(ctx context.Context) {
 func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-	predictableTimeWork(ctx)
+	err := predictableTimeWork(ctx)
+	fmt.Println(err)
 }
