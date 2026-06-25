@@ -39,10 +39,16 @@ func main() {
 	defer cancel()
 
 	go func() {
+		defer close(in)
 		for i := range 100 {
-			in <- i
+			//обработка висящих горутин
+			select {
+			case in <- i:
+			case <-ctx.Done():
+				return
+			}
+
 		}
-		close(in)
 	}()
 
 	now := time.Now()
