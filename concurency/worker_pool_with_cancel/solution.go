@@ -9,15 +9,27 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math/rand"
 	"sync"
 	"time"
 )
 
-func processData(val int) int {
-	time.Sleep(time.Duration(rand.Intn(10)) * time.Second)
-	return val * 2
+var errorCtxTimeout = errors.New("context timeout")
+
+func processData(ctx context.Context, val int) (int, error) {
+	ch := make(chan int)
+	go func() {
+		time.Sleep(time.Duration(rand.Intn(10)) * time.Second)
+		close(ch)
+	}()
+	select {
+	case <-ch:
+		return val * 2, nil
+	case <-ctx.Done():
+		return 0, errorCtxTimeout
+	}
 }
 
 func main() {
@@ -44,12 +56,10 @@ func main() {
 }
 
 func processParallel(in <-chan int, out chan<- int, numWorkers int, ctx context.Context) {
-
 	wg := &sync.WaitGroup{}
-
 	for i := 0; i < numWorkers; i++ {
 		wg.Add(1)
-		go worker(in, out, wg, ctx)
+		go worker(ctx, in, out, wg)
 	}
 
 	go func() {
@@ -58,7 +68,7 @@ func processParallel(in <-chan int, out chan<- int, numWorkers int, ctx context.
 	}()
 }
 
-func worker(in <-chan int, out chan<- int, wg *sync.WaitGroup, ctx context.Context) {
+func worker(ctx context.Context, in <-chan int, out chan<- int, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	for {
@@ -69,7 +79,11 @@ func worker(in <-chan int, out chan<- int, wg *sync.WaitGroup, ctx context.Conte
 			if !ok {
 				return
 			}
-			out <- processData(number)
+			result, err := processData(ctx, number)
+			if err != nil {
+				return
+			}
+			out <- result
 		}
 	}
 }
@@ -77,7 +91,9 @@ func worker(in <-chan int, out chan<- int, wg *sync.WaitGroup, ctx context.Conte
 /*
 Задача решеается с помощью 2 паттернов:
 worker pool и cancelation
+также паттерн обертка для processData
 Алгоритм:
-1. Сначала нам необходимо написать воркеров и запустить их
-2. Затем создать контекст и прокинуть его в воркеров для отмены
+1. Нам необходимо написать воркеров и запустить их
+2. Создать контекст и прокинуть его в воркеров для отмены
+3. Прокинуть контекст в processData
 */
