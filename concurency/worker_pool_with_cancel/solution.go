@@ -1,5 +1,10 @@
-// операция должна выполняться не более 5 секунд
-
+/*
+условие:
+операция должна выполняться не более 5 секунд
+необходимо:
+реализовать функцию processParallel
+прокинуть контекст
+*/
 package main
 
 import (
@@ -64,11 +69,7 @@ func worker(in <-chan int, out chan<- int, wg *sync.WaitGroup, ctx context.Conte
 			if !ok {
 				return
 			}
-			select {
-			case <-ctx.Done():
-				return
-			case out <- processData(number):
-			}
+			out <- processData(number)
 		}
 	}
 }
