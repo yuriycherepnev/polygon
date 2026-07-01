@@ -47,7 +47,6 @@ func main() {
 			case <-ctx.Done():
 				return
 			}
-
 		}
 	}()
 
