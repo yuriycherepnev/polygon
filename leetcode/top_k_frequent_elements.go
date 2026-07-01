@@ -1,14 +1,45 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func main() {
-	nums := []int{1, 2, 1, 2, 1, 2, 3, 1, 3, 2}
+	nums := []int{1, 1, 1}
 	k := 2
 	top := topKFrequent(nums, k)
 	fmt.Println(top)
 }
 
+// решение через слайс
+func topKFrequent(nums []int, k int) []int {
+	mapNums := make(map[int]int)
+
+	for _, number := range nums {
+		mapNums[number]++
+	}
+
+	frequentNums := make([][]int, len(nums)+1)
+
+	for number, count := range mapNums {
+		frequentNums[count] = append(frequentNums[count], number)
+	}
+
+	result := make([]int, 0, k)
+
+	for i := len(frequentNums) - 1; i >= 0; i-- {
+		for _, value := range frequentNums[i] {
+			result = append(result, value)
+			if len(result) == k {
+				return result
+			}
+		}
+	}
+
+	return result
+}
+
+// решение через мапу
 func topKFrequentMap(nums []int, k int) []int {
 	mapNums := make(map[int]int)
 
