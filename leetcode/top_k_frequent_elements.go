@@ -11,7 +11,7 @@ func main() {
 	fmt.Println(top)
 }
 
-// решение через слайс
+// bucket sort
 func topKFrequent(nums []int, k int) []int {
 	mapNums := make(map[int]int)
 
