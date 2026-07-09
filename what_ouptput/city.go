@@ -1,4 +1,4 @@
-package what_ouptput
+package main
 
 import "fmt"
 
@@ -8,8 +8,8 @@ type Address struct {
 	house  int
 }
 
-// не отработает, т.к. a это просто копия ссылка.
-// чтоб поменять значение, нужно сделать либо мутацию обьекта, a.city
+// не отработает, здесь в a копия ссылки, а не сама структура Address
+// чтоб поменять значение, нужно сделать либо мутацию обьекта через a.city
 // либо дереференс и замену обьекта
 func (a *Address) setCity(city string) {
 	a = &Address{
@@ -17,11 +17,12 @@ func (a *Address) setCity(city string) {
 	}
 }
 
-func (a *Address) setStreet(street string) {
+// не отработает, т.к. передана копия структуры
+func (a Address) setStreet(street string) {
 	a.street = street
 }
 
-// тоже самое, здесь в addr лежит копия ссылки
+// тоже самое, здесь addr копия ссылки, а не сама структура
 func setHouse(addr *Address, house int) {
 	addr = &Address{
 		house: house,
