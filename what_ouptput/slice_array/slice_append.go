@@ -3,12 +3,15 @@ package main
 import "fmt"
 
 func main() {
-	var a []int // [] len 0 cap 0
-
-	fmt.Println(len(a), cap(a))
+	var a []int
 	for i := range 3 {
 		a = append(a, i+1)
-
-		fmt.Println(len(a), cap(a))
 	}
+
+	b := append(a, 4)
+	c := append(a, 5)
+
+	fmt.Println(a)
+	fmt.Println(b)
+	fmt.Println(c)
 }
