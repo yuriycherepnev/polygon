@@ -4,11 +4,11 @@ import "fmt"
 
 func main() {
 	var a []int
-	a = append(a, []int{1, 2, 3, 4, 5}...) // len=5 cap=6
+	a = append(a, []int{1, 2, 3, 4, 5}...)
 	println("cap(a) =", cap(a))
 
-	b := append(a, 4)
-	c := append(a, 5)
+	b := append(a, 6)
+	c := append(b, 7)
 	c[1] = 0
 
 	fmt.Println("a =", a)
