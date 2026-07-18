@@ -4,7 +4,7 @@ import "fmt"
 
 func main() {
 	var a []int
-	a = append(a, []int{1, 2, 3}...)
+	a = append(a, []int{1, 2, 3, 4, 5, 6, 7}...) // len=7 cap=8
 
 	println("cap(a) =", cap(a))
 
