@@ -1,0 +1,122 @@
+/*
+Дан журнал финансовых событий пользователей.
+Каждое событие содержит изменение дебетового и кредитного баланса пользователя.
+Необходимо написать функцию RestoreBalance,
+которая по журналу событий восстановит итоговый баланс каждого пользователя.
+
+которая восстанавливает итоговый баланс каждого пользователя по журналу финансовых событий.
+
+Журнал событий хранится в map, поэтому порядок записей не гарантирован.
+Перед обработкой необходимо отсортировать события по полю Timestamp в порядке возрастания.
+*/
+
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+type TransactionEvent struct {
+	ID            string
+	UserID        int
+	DebitBalance  int
+	CreditBalance int
+	Timestamp     int64
+	Override      bool
+}
+
+type UserBalance struct {
+	Debit  int
+	Credit int
+}
+
+func main() {
+	transactions := map[string]TransactionEvent{
+		"ab12cd34ef56": {
+			ID:            "ab12cd34ef56",
+			UserID:        1,
+			DebitBalance:  500,
+			CreditBalance: 200,
+			Timestamp:     time.Now().Unix(),
+			Override:      false,
+		},
+		"34ff78aa129b": {
+			ID:            "34ff78aa129b",
+			UserID:        1,
+			DebitBalance:  750,
+			CreditBalance: 300,
+			Timestamp:     time.Now().Add(2 * time.Minute).Unix(),
+			Override:      false,
+		},
+		"98aa21ff44de": {
+			ID:            "98aa21ff44de",
+			UserID:        1,
+			DebitBalance:  1200,
+			CreditBalance: 450,
+			Timestamp:     time.Now().Add(4 * time.Minute).Unix(),
+			Override:      true,
+		},
+		"aa99cc77bb66": {
+			ID:            "aa99cc77bb66",
+			UserID:        1,
+			DebitBalance:  300,
+			CreditBalance: 100,
+			Timestamp:     time.Now().Add(6 * time.Minute).Unix(),
+			Override:      true,
+		},
+		"1122ffee8899": {
+			ID:            "1122ffee8899",
+			UserID:        1,
+			DebitBalance:  950,
+			CreditBalance: 500,
+			Timestamp:     time.Now().Add(8 * time.Minute).Unix(),
+		},
+		"dd1199aabb77": {
+			ID:            "dd1199aabb77",
+			UserID:        2,
+			DebitBalance:  900,
+			CreditBalance: 150,
+			Timestamp:     time.Now().Add(10 * time.Minute).Unix(),
+			Override:      false,
+		},
+		"66aa55cc4433": {
+			ID:            "66aa55cc4433",
+			UserID:        2,
+			DebitBalance:  400,
+			CreditBalance: 350,
+			Timestamp:     time.Now().Add(12 * time.Minute).Unix(),
+			Override:      true,
+		},
+		"ff3344dd5566": {
+			ID:            "ff3344dd5566",
+			UserID:        2,
+			DebitBalance:  700,
+			CreditBalance: 600,
+			Timestamp:     time.Now().Add(14 * time.Minute).Unix(),
+		},
+		"bbccddeeff00": {
+			ID:            "bbccddeeff00",
+			UserID:        2,
+			DebitBalance:  1100,
+			CreditBalance: 800,
+			Timestamp:     time.Now().Add(16 * time.Minute).Unix(),
+			Override:      false,
+		},
+		"778899aabbcc": {
+			ID:            "778899aabbcc",
+			UserID:        2,
+			DebitBalance:  500,
+			CreditBalance: 200,
+			Timestamp:     time.Now().Add(18 * time.Minute).Unix(),
+		},
+	}
+
+	fmt.Println(transactions)
+}
+
+func RestoreBalance(log map[string]TransactionEvent) map[int]UserBalance {
+	users := make(map[int]UserBalance)
+
+	return users
+}
