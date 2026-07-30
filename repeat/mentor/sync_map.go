@@ -12,8 +12,10 @@ import (
 )
 
 func main() {
-	fmt.Println(GetOrCreate("hello", "world"))
-	fmt.Println(Get("hello"))
+	cacheMap := CacheT{}
+
+	fmt.Println(cacheMap.GetOrCreate("hello", "world"))
+	fmt.Println(cacheMap.Get("hello"))
 }
 
 var cache = make(map[string]string)
@@ -42,6 +44,6 @@ func (c *CacheT) GetOrCreate(key, value string) string {
 
 func (c *CacheT) Get(key string) string {
 
-	v := c.Cache[key] // c.CacheM.Load(key)
+	v, _ := c.CacheM.Load(key)
 	return v
 }
