@@ -12,10 +12,8 @@ import (
 )
 
 func main() {
-	cacheMap := CacheT{}
-
-	fmt.Println(cacheMap.GetOrCreate("hello", "world"))
-	fmt.Println(cacheMap.Get("hello"))
+	fmt.Println(GetOrCreateT("hello", "world"))
+	fmt.Println(GetT("hello"))
 }
 
 var cache = make(map[string]string)
@@ -25,7 +23,7 @@ type CacheT struct {
 	sync.RWMutex
 }
 
-func (c *CacheT) GetOrCreate(key, value string) string {
+func (c *CacheT) GetOrCreateT(key, value string) string {
 
 	c.Lock()
 	value = cache[key]
@@ -42,8 +40,8 @@ func (c *CacheT) GetOrCreate(key, value string) string {
 	return value
 }
 
-func (c *CacheT) Get(key string) string {
+func (c *CacheT) GetT(key string) string {
 
-	v, _ := c.CacheM.Load(key)
+	v := c.CacheT[key] // c.CacheM.Load(key)
 	return v
 }
