@@ -12,10 +12,8 @@ import (
 )
 
 func main() {
-	cacheMap := CacheT{}
-
-	fmt.Println(cacheMap.GetOrCreateT("hello", "world"))
-	fmt.Println(cacheMap.GetT("hello"))
+	fmt.Println(GetOrCreateT("hello", "world"))
+	fmt.Println(GetT("hello"))
 }
 
 var cache = make(map[string]string)
@@ -26,11 +24,13 @@ type CacheT struct {
 }
 
 func (c *CacheT) GetOrCreateT(key, value string) string {
-	c.RLock()
-	v, ok := cache[key]
-	c.RUnlock()
-	if ok {
-		return v
+
+	c.Lock()
+	value = cache[key]
+	c.Unlock()
+
+	if value != "" {
+		return value
 	}
 
 	c.Lock()
@@ -41,11 +41,7 @@ func (c *CacheT) GetOrCreateT(key, value string) string {
 }
 
 func (c *CacheT) GetT(key string) string {
-	c.RLock()
-	defer c.RUnlock()
-	v, ok := cache[key]
-	if ok {
-		return v
-	}
-	return ""
+
+	v := c.CacheT[key] // c.CacheM.Load(key)
+	return v
 }
