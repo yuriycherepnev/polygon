@@ -1,7 +1,8 @@
 /*
 Разработчик дал на ревью код своего нового кэша, нам необходимо провести код-ревью
- Кэш будет использоваться под высокой нагрузкой в проде
- Частота записи/чтения 20%/80% соответственно
+
+	Кэш будет использоваться под высокой нагрузкой в проде
+	Частота записи/чтения 20%/80% соответственно
 */
 
 package main
@@ -12,9 +13,8 @@ import (
 )
 
 func main() {
-	cacheMap := CacheT{}
-	fmt.Println(cacheMap.GetOrCreateT("hello", "world"))
-	fmt.Println(cacheMap.GetT("hello"))
+	fmt.Println(GetOrCreateT("hello", "world"))
+	fmt.Println(GetT("hello"))
 }
 
 var cache = make(map[string]string)
@@ -42,9 +42,7 @@ func (c *CacheT) GetOrCreateT(key, value string) string {
 }
 
 func (c *CacheT) GetT(key string) string {
-	value, ok := syncMap.Load(key)
-	if ok {
-		return value.(string)
-	}
-	return ""
+
+	v := c.CacheT[key]
+	return v
 }
