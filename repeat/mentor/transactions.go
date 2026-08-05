@@ -107,7 +107,9 @@ func main() {
 		},
 	}
 
-	fmt.Println(transactions)
+	balance := RestoreBalance(transactions)
+
+	fmt.Println(balance)
 }
 
 func RestoreBalance(log map[string]TransactionEvent) map[int]UserBalance {
