@@ -65,6 +65,7 @@ func worker(jobs chan string, results chan urlResponse, wg *sync.WaitGroup) {
 		}
 
 		body, err := io.ReadAll(resp.Body)
+		resp.Body.Close()
 		if err != nil {
 			results <- urlResponse{
 				url: url,
@@ -72,8 +73,6 @@ func worker(jobs chan string, results chan urlResponse, wg *sync.WaitGroup) {
 			}
 			continue
 		}
-
-		resp.Body.Close()
 
 		results <- urlResponse{
 			url: url,
