@@ -13,6 +13,9 @@ func main() {
 }
 
 func anagramStr(strOne string, strTwo string) bool {
+	if len(strOne) != len(strTwo) {
+		return false
+	}
 	mapString := make(map[int32]int)
 
 	for _, value := range strOne {
