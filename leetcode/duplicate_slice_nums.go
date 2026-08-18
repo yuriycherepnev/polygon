@@ -12,17 +12,17 @@ func main() {
 }
 
 func deleteDouble(numbers []int) []int {
-	mapString := make(map[int]struct{})
+	mapNums := make(map[int]struct{})
 	x := 0
 
-	for index, value := range numbers {
-		_, ok := mapString[value]
+	for _, value := range numbers {
+		_, ok := mapNums[value]
 		if ok {
 			continue
 		}
 
-		mapString[value] = struct{}{}
-		numbers[x] = numbers[index]
+		mapNums[value] = struct{}{}
+		numbers[x] = value
 		x++
 	}
 
