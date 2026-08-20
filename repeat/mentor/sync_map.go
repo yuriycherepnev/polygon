@@ -12,36 +12,37 @@ import (
 )
 
 func main() {
-	fmt.Println(GetOrCreateT("hello", "world"))
-	fmt.Println(GetT("hello"))
+	cacheM := CacheM{}
+
+	fmt.Println(cacheM.GetOrCreate("hello", "world"))
+	fmt.Println(cacheM.Get("hello"))
 }
 
 var cache = make(map[string]string)
 
-type CacheT struct {
-	CacheM sync.Map
-	sync.RWMutex
+type CacheM struct {
+	mtx  sync.RWMutex
+	sMap sync.Map
 }
 
-func (c *CacheT) GetOrCreateT(key, value string) string {
-
-	c.Lock()
-	value = cache[key]
-	c.Unlock()
-
-	if value != "" {
+// GetOrCreate проверяет существование ключа key
+// Если такого нет, то создает новое значение
+func (c *CacheM) GetOrCreate(key, value string) string {
+	c.mtx.RLock()
+	value, ok := cache[key]
+	c.mtx.RUnlock()
+	if ok {
 		return value
 	}
-
-	c.Lock()
+	c.mtx.Lock()
+	defer c.mtx.Unlock()
 	cache[key] = value
-	c.Unlock()
-
 	return value
 }
 
-func (c *CacheT) GetT(key string) string {
-
-	v := c.CacheT[key]
+func (c *CacheM) Get(key string) string {
+	c.mtx.RLock()
+	defer c.mtx.RUnlock()
+	v := cache[key]
 	return v
 }
