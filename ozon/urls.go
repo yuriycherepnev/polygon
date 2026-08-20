@@ -12,10 +12,6 @@ func main() {
 	urls := []string{
 		"https://www.ozon.ru/",
 		"https://music.yandex.ru/",
-		"https://www.ozon.ru/",
-		"https://music.yandex.ru/",
-		"https://www.ozon.ru/",
-		"https://music.yandex.ru/",
 	}
 	jobs := make(chan string, len(urls))
 	results := make(chan string, len(urls))
