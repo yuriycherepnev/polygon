@@ -16,22 +16,22 @@ func main() {
 
 func merge(cs ...<-chan int) <-chan int {
 	var wg sync.WaitGroup
-	results := make(chan int)
+	out := make(chan int)
 
 	for _, channel := range cs {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
 			for v := range channel {
-				results <- v
+				out <- v
 			}
 		}()
 	}
 
 	go func() {
 		wg.Wait()
-		close(results)
+		close(out)
 	}()
 
-	return results
+	return out
 }
