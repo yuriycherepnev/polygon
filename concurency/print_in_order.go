@@ -52,9 +52,37 @@ func main() {
 	}()
 
 	wg.Wait()
-	fmt.Println()
 }
 
+type Foo struct {
+	first  chan struct{}
+	second chan struct{}
+}
+
+func NewFoo() *Foo {
+	return &Foo{
+		first:  make(chan struct{}),
+		second: make(chan struct{}),
+	}
+}
+
+func (f *Foo) First(printFirst func()) {
+	printFirst()
+	f.first <- struct{}{}
+}
+
+func (f *Foo) Second(printSecond func()) {
+	<-f.first
+	printSecond()
+	f.second <- struct{}{}
+}
+
+func (f *Foo) Third(printThird func()) {
+	<-f.second
+	printThird()
+}
+
+/*
 // решение через wait group
 type Foo struct {
 	first  sync.WaitGroup
@@ -87,39 +115,6 @@ func (f *Foo) Second(printSecond func()) {
 
 func (f *Foo) Third(printThird func()) {
 	f.second.Wait()
-	// Do not change this line
-	printThird()
-}
-
-// решение через каналы
-/*
-type Foo struct {
-	firstChan  chan int
-	secondChan chan int
-}
-
-func NewFoo() *Foo {
-	return &Foo{
-		firstChan:  make(chan int),
-		secondChan: make(chan int),
-	}
-}
-
-func (f *Foo) First(printFirst func()) {
-	// Do not change this line
-	printFirst()
-	f.firstChan <- 1
-}
-
-func (f *Foo) Second(printSecond func()) {
-	number := <-f.firstChan
-	/// Do not change this line
-	printSecond()
-	f.secondChan <- number
-}
-
-func (f *Foo) Third(printThird func()) {
-	<-f.secondChan
 	// Do not change this line
 	printThird()
 }
