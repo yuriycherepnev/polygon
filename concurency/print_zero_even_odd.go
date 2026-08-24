@@ -55,10 +55,10 @@ func NewZeroEvenOdd(n int) *ZeroEvenOdd {
 func (z *ZeroEvenOdd) Zero(printNumber func(int)) {
 	for i := 1; i <= z.n; i++ {
 		printNumber(0)
-		if i%2 != 0 {
-			z.chanOdd <- struct{}{}
-		} else {
+		if i%2 == 0 {
 			z.chanEven <- struct{}{}
+		} else {
+			z.chanOdd <- struct{}{}
 		}
 		<-z.chanZero
 	}
