@@ -8,32 +8,30 @@ import (
 // решение в помощью channels - самое быстрое
 type FooBar struct {
 	n   int
-	chn chan struct{}
+	sem chan struct{}
 }
 
 func NewFooBar(n int) *FooBar {
 	f := &FooBar{
 		n:   n,
-		chn: make(chan struct{}),
+		sem: make(chan struct{}),
 	}
 	return f
 }
 
 func (fb *FooBar) Foo(printFoo func()) {
 	for i := 0; i < fb.n; i++ {
-		// printFoo() outputs "foo". Do not change or remove this line.
 		printFoo()
-		fb.chn <- struct{}{}
-		<-fb.chn
+		fb.sem <- struct{}{}
+		<-fb.sem
 	}
 }
 
 func (fb *FooBar) Bar(printBar func()) {
 	for i := 0; i < fb.n; i++ {
-		<-fb.chn
-		// printBar() outputs "bar". Do not change or remove this line.
+		<-fb.sem
 		printBar()
-		fb.chn <- struct{}{}
+		fb.sem <- struct{}{}
 	}
 }
 
