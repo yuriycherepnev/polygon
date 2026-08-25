@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"math/rand"
@@ -11,7 +12,7 @@ func randomTimeWorkCh() {
 	time.Sleep(time.Duration(rand.Intn(100)) * time.Second)
 }
 
-func predictableTimeWorkCh() error {
+func predictableTimeWorkCh(ctx context.Context) error {
 	ch := make(chan struct{})
 
 	go func() {
@@ -22,13 +23,15 @@ func predictableTimeWorkCh() error {
 	select {
 	case <-ch:
 		return nil
-	case <-time.After(3 * time.Second):
+	case <-ctx.Done():
 		return errors.New("time is expired")
 	}
 }
 
 func main() {
-	err := predictableTimeWorkCh()
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	err := predictableTimeWorkCh(ctx)
 	if err != nil {
 		fmt.Println(err)
 	} else {
