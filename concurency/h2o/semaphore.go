@@ -29,18 +29,18 @@ func main() {
 }
 
 type H2O struct {
-	oxygenLockCh chan struct{}
-	hydrogenCh   chan struct{}
-	oxygenCh     chan struct{}
+	lockCh     chan struct{}
+	hydrogenCh chan struct{}
+	oxygenCh   chan struct{}
 }
 
 func NewH2O() *H2O {
 	h := &H2O{
-		oxygenLockCh: make(chan struct{}, 1),
-		hydrogenCh:   make(chan struct{}, 2),
-		oxygenCh:     make(chan struct{}, 2),
+		lockCh:     make(chan struct{}, 1),
+		hydrogenCh: make(chan struct{}, 2),
+		oxygenCh:   make(chan struct{}, 2),
 	}
-	h.oxygenLockCh <- struct{}{}
+	h.lockCh <- struct{}{}
 	h.oxygenCh <- struct{}{}
 	h.oxygenCh <- struct{}{}
 	return h
@@ -53,11 +53,11 @@ func (h *H2O) Hydrogen(releaseHydrogen func()) {
 }
 
 func (h *H2O) Oxygen(releaseOxygen func()) {
-	<-h.oxygenLockCh
+	<-h.lockCh
 	<-h.oxygenCh
 	<-h.oxygenCh
 	releaseOxygen()
 	h.hydrogenCh <- struct{}{}
 	h.hydrogenCh <- struct{}{}
-	h.oxygenLockCh <- struct{}{}
+	h.lockCh <- struct{}{}
 }
