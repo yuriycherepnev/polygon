@@ -2,16 +2,9 @@ package main
 
 import (
 	"fmt"
-	"io"
 	"net/http"
 	"sync"
 )
-
-type urlResponse struct {
-	url string
-	len int
-	err error
-}
 
 func main() {
 	urls := []string{
@@ -27,10 +20,10 @@ func main() {
 	}
 
 	jobs := make(chan string, len(urls))
-	results := make(chan urlResponse, len(urls))
+	results := make(chan string, len(urls))
 	wg := &sync.WaitGroup{}
 
-	for i := 0; i < 5; i++ {
+	for i := 0; i < 3; i++ {
 		wg.Add(1)
 		go worker(jobs, results, wg)
 	}
@@ -48,35 +41,22 @@ func main() {
 	}()
 
 	for message := range results {
-		fmt.Println(message.url, message.len, message.err)
+		fmt.Println(message)
 	}
 }
 
-func worker(jobs chan string, results chan urlResponse, wg *sync.WaitGroup) {
+func worker(jobs chan string, result chan string, wg *sync.WaitGroup) {
 	defer wg.Done()
+
 	for url := range jobs {
 		resp, err := http.Get(url)
+
 		if err != nil {
-			results <- urlResponse{
-				url: url,
-				err: err,
-			}
+			result <- url + " not ok"
 			continue
 		}
 
-		body, err := io.ReadAll(resp.Body)
 		resp.Body.Close()
-		if err != nil {
-			results <- urlResponse{
-				url: url,
-				err: err,
-			}
-			continue
-		}
-
-		results <- urlResponse{
-			url: url,
-			len: len(body),
-		}
+		result <- url + " ok"
 	}
 }

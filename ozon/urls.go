@@ -5,13 +5,17 @@ import (
 	"fmt"
 	"net/http"
 	"sync"
+	"time"
 )
 
 func main() {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
 	urls := []string{
-		"https://www.ozon.ru/",
-		"https://music.yandex.ru/",
+		"https://example.com",
+		"https://golang.org",
+		"https://google.com",
+		"https://example.com",
 	}
 	jobs := make(chan string, len(urls))
 	results := make(chan string, len(urls))
@@ -23,11 +27,7 @@ func main() {
 	}
 
 	go func() {
-		for i, url := range urls {
-			if i == 2 {
-				cancel()
-				break
-			}
+		for _, url := range urls {
 			jobs <- url
 		}
 		close(jobs)
