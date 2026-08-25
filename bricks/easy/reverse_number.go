@@ -11,7 +11,8 @@ func main() {
 func reverseNumber(number int) int {
 	reversed := 0
 	for number > 0 {
-		reversed = reversed*10 + number%10
+		remain := number % 10
+		reversed = reversed*10 + remain
 		number /= 10
 	}
 	return reversed
