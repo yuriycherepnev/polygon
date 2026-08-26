@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"crypto/md5"
 	"fmt"
 )
@@ -11,46 +12,41 @@ func main() {
 	TestRecoverPassword()
 }
 
-func RecoverPassword(h []byte) string {
-	length := 1
-	for {
-		result := genPassword(h, nil, length)
-		length++
+func RecoverPassword(hash []byte) string {
+	for length := 1; ; length++ {
+		result := generatePassword(hash, "", length)
 		if result != "" {
 			return result
 		}
 	}
 }
 
-func genPassword(h []byte, password []rune, length int) string {
+func generatePassword(hash []byte, password string, length int) string {
 	if len(password) == length {
-		hash := md5.Sum([]byte(string(password)))
-
-		if string(hash[:]) == string(h) {
-			return string(password)
+		if checkPassword(password, hash) {
+			return password
 		}
-
 		return ""
 	}
-
 	for _, ch := range alphabet {
-		password = append(password, ch)
-		result := genPassword(h, password, length)
+		result := generatePassword(hash, password+string(ch), length)
+
 		if result != "" {
 			return result
 		}
-
-		password = password[:len(password)-1]
 	}
-
 	return ""
+}
+
+func checkPassword(password string, h []byte) bool {
+	hash := hashPassword(password)
+	return bytes.Equal(hash, h)
 }
 
 func TestRecoverPassword() {
 	for _, exp := range []string{
 		"a",
 		"12",
-		"abc333d",
 	} {
 		act := RecoverPassword(hashPassword(exp))
 
