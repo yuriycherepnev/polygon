@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"crypto/md5"
 	"fmt"
 )
@@ -43,7 +42,7 @@ func generatePassword(hash []byte, password string, length int) string {
 
 func checkPassword(password string, h []byte) bool {
 	hash := hashPassword(password)
-	return bytes.Equal(hash, h)
+	return string(hash) == string(h)
 }
 
 func TestRecoverPassword() {
