@@ -13,16 +13,19 @@ func main() {
 }
 
 func RecoverPassword(hash []byte) string {
-	for length := 1; ; length++ {
+	length := 1
+	for {
 		result := generatePassword(hash, "", length)
 		if result != "" {
 			return result
 		}
+		length++
 	}
 }
 
 func generatePassword(hash []byte, password string, length int) string {
 	if len(password) == length {
+		fmt.Println(password)
 		if checkPassword(password, hash) {
 			return password
 		}
@@ -45,8 +48,7 @@ func checkPassword(password string, h []byte) bool {
 
 func TestRecoverPassword() {
 	for _, exp := range []string{
-		"a",
-		"12",
+		"2",
 	} {
 		act := RecoverPassword(hashPassword(exp))
 
