@@ -40,9 +40,9 @@ func generatePassword(hash []byte, password string, length int) string {
 	return ""
 }
 
-func checkPassword(password string, h []byte) bool {
-	hash := hashPassword(password)
-	return string(hash) == string(h)
+func checkPassword(password string, hash []byte) bool {
+	hashPass := hashPassword(password)
+	return string(hashPass) == string(hash)
 }
 
 func TestRecoverPassword() {
