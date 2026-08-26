@@ -24,15 +24,15 @@ func RecoverPassword(hash []byte) string {
 }
 
 func generatePassword(hash []byte, password string, length int) string {
-	if len(password) == length {
-		fmt.Println(password)
+	runePwd := []rune(password)
+	if len(runePwd) == length {
 		if checkPassword(password, hash) {
 			return password
 		}
 		return ""
 	}
-	for _, ch := range alphabet {
-		result := generatePassword(hash, password+string(ch), length)
+	for _, char := range alphabet {
+		result := generatePassword(hash, password+string(char), length)
 
 		if result != "" {
 			return result
