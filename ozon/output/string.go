@@ -5,7 +5,7 @@ func main() {
 
 	println(s[0]) // что выведет?
 
-	b := []rune(s)
+	b := []byte(s)
 	b[0] = 'R'
 	s = string(b)
 
