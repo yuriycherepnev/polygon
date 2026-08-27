@@ -3,9 +3,11 @@ package main
 import "fmt"
 
 func main() {
-	s1, s2 := []int{1, 2, 3}, []int{4, 5, 6, 7, 8}
+	s1, s2, s3 := []int{1, 2, 3}, []int{4, 5, 6, 7, 8}, []int{9, 10, 11, 12, 13}
 
 	fmt.Println(zip(s1, s2)) // [[1 4] [2 5] [3 6]]
+
+	fmt.Println(zip2(s1, s2, s3))
 }
 
 func zip(s1 []int, s2 []int) [][]int {
@@ -13,7 +15,7 @@ func zip(s1 []int, s2 []int) [][]int {
 	if minLen > len(s2) {
 		minLen = len(s2)
 	}
-	zipSlice := make([][]int, minLen)
+	zipSlice := make([][]int, 0, minLen)
 	for i := 0; i < minLen; i++ {
 		zipSlice = append(zipSlice, []int{s1[i], s2[i]})
 	}
@@ -27,14 +29,13 @@ func zip2(s ...[]int) [][]int {
 			minLen = len(v)
 		}
 	}
-	zipSlice := make([][]int, minLen)
-
+	zipSlice := make([][]int, 0, minLen)
 	for i := 0; i < minLen; i++ {
-		x := make([]int, minLen)
+		insertSlice := make([]int, minLen)
 		for l := 0; l < len(s); l++ {
-			x = append(x, s[l][i])
+			insertSlice[l] = s[l][i]
 		}
-		zipSlice = append(zipSlice, x)
+		zipSlice = append(zipSlice, insertSlice)
 	}
 	return zipSlice
 }
