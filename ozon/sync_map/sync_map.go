@@ -19,12 +19,12 @@ type Cache[K comparable, V any] struct {
 	cacheMap sync.Map
 }
 
-func (c *Cache[K, V]) GetOrCreate(key, value string) (V, bool) {
+func (c *Cache[K, V]) GetOrCreate(key K, value V) (V, bool) {
 	store, ok := c.cacheMap.LoadOrStore(key, value)
 	return store.(V), ok
 }
 
-func (c *Cache[K, V]) Get(key string) (V, bool) {
+func (c *Cache[K, V]) Get(key K) (V, bool) {
 	v, ok := c.cacheMap.Load(key)
 	if ok {
 		return v.(V), true
