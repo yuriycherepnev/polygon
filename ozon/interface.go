@@ -10,6 +10,7 @@ type AB interface {
 	A()
 	B()
 }
+
 type BC interface {
 	B()
 	C()
@@ -17,7 +18,7 @@ type BC interface {
 
 func main() {
 	var f AB = &Foo{}
-	y := f.(BC) // сработает type-assertion
-	y.A()       // не сработает
+	y := f.(BC) // type-assertion сработает
+	y.A()       // прямой вызов не сработает
 	_ = y
 }
