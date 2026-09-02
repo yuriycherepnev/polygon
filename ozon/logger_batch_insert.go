@@ -34,7 +34,7 @@ func main() {
 }
 
 func logMessage(message string) {
-	messages <- message
+	insertMessage(message)
 }
 
 func insertMessage(message string) {
