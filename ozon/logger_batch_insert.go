@@ -26,20 +26,20 @@ func main() {
 	for i := 0; i < 300; i++ {
 		logMessage(strconv.Itoa(i))
 
-		if i%50 == 0 {
-			time.Sleep(2 * time.Second)
-		}
+		//if (i % 50) == 0 {
+		//	time.Sleep(2 * time.Second)
+		//}
 	}
 
 	wg.Wait()
 }
 
 func logMessage(message string) {
-	insertMessage(message)
+	messages <- message
 }
 
-func insertMessage(message string) {
-	insertDb(message)
+func insertBatch(messages []string) {
+	fmt.Println(messages)
 }
 
 func logWorker() {
@@ -67,15 +67,4 @@ func logWorker() {
 			}
 		}
 	}
-}
-
-func insertBatch(messages []string) {
-	fmt.Println(messages)
-	for _, message := range messages {
-		fmt.Println(message)
-	}
-}
-
-func insertDb(message string) {
-	// сохранение в БД
 }
