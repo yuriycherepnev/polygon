@@ -14,10 +14,10 @@ import (
 )
 
 var (
-	messages = make(chan string, 100)
-	batch    = make([]string, 0, 10)
-	wg       = sync.WaitGroup{}
-	ticker   = time.NewTicker(2 * time.Second)
+	msgCh  = make(chan string, 100)
+	batch  = make([]string, 0, 10)
+	wg     = sync.WaitGroup{}
+	ticker = time.NewTicker(2 * time.Second)
 )
 
 func main() {
@@ -32,7 +32,7 @@ func main() {
 }
 
 func logMessage(message string) {
-	messages <- message
+	msgCh <- message
 }
 
 func insertBatch(messages []string) {
@@ -42,21 +42,16 @@ func insertBatch(messages []string) {
 func logWorker() {
 	defer wg.Done()
 	defer ticker.Stop()
-
 	for {
 		select {
-		case message := <-messages:
-			batch = append(batch, message)
-
+		case msg := <-msgCh:
+			batch = append(batch, msg)
 			if len(batch) == 10 {
-				fmt.Println("batch")
 				insertBatch(batch)
 				batch = batch[:0]
 			}
-
 		case <-ticker.C:
 			if len(batch) > 0 {
-				fmt.Println("ticker")
 				insertBatch(batch)
 				batch = batch[:0]
 			}
