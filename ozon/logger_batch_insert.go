@@ -15,6 +15,7 @@ import (
 
 var (
 	messages = make(chan string, 100)
+	batch    = make([]string, 0, 10)
 	wg       = sync.WaitGroup{}
 	ticker   = time.NewTicker(2 * time.Second)
 )
@@ -45,8 +46,6 @@ func insertBatch(messages []string) {
 func logWorker() {
 	defer wg.Done()
 	defer ticker.Stop()
-
-	batch := make([]string, 0, 10)
 
 	for {
 		select {
