@@ -8,7 +8,6 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
 	"strconv"
 	"sync"
 	"time"
@@ -16,7 +15,7 @@ import (
 
 var (
 	messages = make(chan string, 100)
-	wg       sync.WaitGroup
+	wg       = sync.WaitGroup{}
 	ticker   = time.NewTicker(2 * time.Second)
 )
 
@@ -26,8 +25,10 @@ func main() {
 
 	for i := 0; i < 300; i++ {
 		logMessage(strconv.Itoa(i))
-		random := rand.Intn(101) + 50
-		time.Sleep(time.Duration(random) * time.Millisecond)
+
+		if i%50 == 0 {
+			time.Sleep(2 * time.Second)
+		}
 	}
 
 	wg.Wait()
@@ -70,9 +71,9 @@ func logWorker() {
 
 func insertBatch(messages []string) {
 	fmt.Println(messages)
-	//for _, message := range messages {
-	//	fmt.Println(message)
-	//}
+	for _, message := range messages {
+		fmt.Println(message)
+	}
 }
 
 func insertDb(message string) {
