@@ -26,10 +26,6 @@ func main() {
 
 	for i := 0; i < 300; i++ {
 		logMessage(strconv.Itoa(i))
-
-		//if (i % 50) == 0 {
-		//	time.Sleep(2 * time.Second)
-		//}
 	}
 
 	wg.Wait()
