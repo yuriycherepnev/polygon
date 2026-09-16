@@ -15,7 +15,7 @@ func main() {
 	uniqueNumbers := generateUniqueNumbersMap(5, 45, 50)
 	fmt.Println(uniqueNumbers)
 
-	uniqueNumbers2 := generateUniqueNumbersSlice(5, 45, 50)
+	uniqueNumbers2 := generateUniqueNumbersSlice(5, 5, 100)
 	fmt.Println(uniqueNumbers2)
 }
 
@@ -40,19 +40,15 @@ func generateUniqueNumbersMap(n, min int, max int) []int {
 }
 
 func generateUniqueNumbersSlice(n, min int, max int) []int {
-	if n > max {
-		return nil
-	}
-	nums := make([]int, max)
+	nums := make([]int, 0, n)
 
 	for i := min; i < max; i++ {
-		nums[i] = i
+		nums = append(nums, i)
 	}
-	rangeNums := nums[min:max]
 
-	rand.Shuffle(len(rangeNums), func(i, j int) {
-		rangeNums[i], rangeNums[j] = rangeNums[j], rangeNums[i]
+	rand.Shuffle(len(nums), func(i, j int) {
+		nums[i], nums[j] = nums[j], nums[i]
 	})
 
-	return rangeNums[:n]
+	return nums[:n]
 }
