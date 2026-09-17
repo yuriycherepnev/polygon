@@ -1,5 +1,6 @@
 package main
 
+/*
 import (
 	"hash/crc32"
 	"sync"
@@ -55,3 +56,4 @@ func (c *cache) getShard(k string) *shard {
 	index := hash % shardsCount
 	return &c.shards[index]
 }
+*/

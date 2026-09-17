@@ -1,5 +1,6 @@
-/*
 package main
+
+/*
 
 import (
 	"database/sql"
@@ -169,4 +170,3 @@ func (br *bankRepository) getBanks() []bankStorage {
 	}
 }
 */
-
