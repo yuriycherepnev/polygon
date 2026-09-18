@@ -20,6 +20,7 @@ type Source interface {
 func FetchAll(ctx context.Context, sources []Source) ([]Car, error) {
 	var wg sync.WaitGroup
 	results := make(chan []Car)
+	var total int
 
 	for _, src := range sources {
 		wg.Add(1)
@@ -29,11 +30,8 @@ func FetchAll(ctx context.Context, sources []Source) ([]Car, error) {
 			if err != nil {
 				return
 			}
-			select {
-			case results <- cars:
-			case <-ctx.Done():
-				return
-			}
+			total++
+			results <- cars
 		}(src)
 	}
 
@@ -47,7 +45,7 @@ func FetchAll(ctx context.Context, sources []Source) ([]Car, error) {
 		all = append(all, batch...)
 	}
 
-	if len(all) == 0 {
+	if total == 0 {
 		return nil, fmt.Errorf("no cars found")
 	}
 	return all, nil
@@ -57,41 +55,20 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
 	defer cancel()
 
+	sources := []Source{}
 	cars, err := FetchAll(ctx, sources)
 	if err != nil {
 		fmt.Println("error:", err)
 		return
 	}
-	fmt.Println(cars)
+	fmt.Println("cars:", cars)
 }
 
-var (
-	sources = []Source{
-		fetchSource{
-			cars: []Car{
-				{ID: 1, Model: "BMW X5", Price: 50000},
-				{ID: 2, Model: "Audi A6", Price: 40000},
-			},
-		},
-		fetchSource{
-			cars: []Car{
-				{ID: 3, Model: "Mercedes E-Class", Price: 60000},
-				{ID: 4, Model: "Tesla Model 3", Price: 45000},
-			},
-		},
-		fetchSource{
-			cars: []Car{
-				{ID: 5, Model: "Toyota Camry", Price: 30000},
-			},
-		},
-	}
-)
+var ()
 
-type fetchSource struct {
-	cars []Car
-	err  error
+type FetchSource struct {
 }
 
-func (s fetchSource) Fetch(ctx context.Context) ([]Car, error) {
-	return s.cars, s.err
+func (f FetchSource) Fetch(ctx context.Context) ([]Car, error) {
+	return nil, nil
 }

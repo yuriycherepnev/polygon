@@ -10,6 +10,7 @@ import (
 
 func main() {
 	var group singleflight.Group
+	results := make(chan string)
 
 	var wg sync.WaitGroup
 
@@ -19,28 +20,21 @@ func main() {
 		go func(id int) {
 			defer wg.Done()
 
-			result, err, shared := group.Do("user:123", func() (any, error) {
-				fmt.Println(">>> Выполняем запрос в БД")
-
-				// Имитируем медленный запрос
+			result, _, _ := group.Do("user:123", func() (any, error) {
 				time.Sleep(2 * time.Second)
-
 				return "Yuriy", nil
 			})
 
-			if err != nil {
-				fmt.Println("goroutine", id, "error:", err)
-				return
-			}
-
-			fmt.Printf(
-				"goroutine %d: result=%v, shared=%v\n",
-				id,
-				result,
-				shared,
-			)
+			results <- result.(string)
 		}(i)
 	}
 
-	wg.Wait()
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+
+	for result := range results {
+		fmt.Println(result)
+	}
 }
