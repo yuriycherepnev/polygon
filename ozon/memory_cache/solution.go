@@ -1,6 +1,9 @@
 package main
 
-import "sync"
+import (
+	"fmt"
+	"sync"
+)
 
 type Cache interface {
 	Set(k, v string)
@@ -10,12 +13,6 @@ type Cache interface {
 type cache struct {
 	mu   sync.RWMutex
 	data map[string]string
-}
-
-func NewMCache() Cache {
-	return &cache{
-		data: make(map[string]string),
-	}
 }
 
 func (c *cache) Set(k, v string) {
@@ -33,7 +30,17 @@ func (c *cache) Get(k string) (string, bool) {
 	return v, ok
 }
 
+func NewMCache() Cache {
+	c := &cache{
+		mu:   sync.RWMutex{},
+		data: make(map[string]string),
+	}
+
+	return c
+}
+
 func main() {
 	mCache := NewMCache()
 	mCache.Set("123", "123")
+	fmt.Println(mCache.Get("123"))
 }
