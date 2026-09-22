@@ -9,6 +9,7 @@ func (f FileLogger) Log(...). В Go такой метод работает с к
 
 package main
 
+/*
 import (
 	"fmt"
 )
@@ -21,13 +22,16 @@ type FileLogger struct {
 	buffer []string
 }
 
-func (f *FileLogger) Log(message string) {
+// работать не будет, т.к. чтобы функция с получателем меняла свойства
+// структура должна быть передана по ссылке
+func (f FileLogger) Log(message string) {
 	f.buffer = append(f.buffer, message)
 	fmt.Println("saved:", message)
 }
 
+// необходимо задействовать интерфейс Logger
 type Service struct {
-	logger Logger
+	logger FileLogger
 }
 
 func (s Service) Process() {
@@ -35,8 +39,7 @@ func (s Service) Process() {
 }
 
 func main() {
-	logger := &FileLogger{}
-	logger.Log("123")
+	logger := FileLogger{}
 
 	service := Service{
 		logger: logger,
@@ -44,8 +47,9 @@ func main() {
 
 	service.Process()
 
-	fmt.Println(logger)
+	fmt.Println(logger.buffer)
 }
+*/
 
 /*
 В Go, когда метод определён на значении, внутри метода создаётся копия структуры.
