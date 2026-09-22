@@ -6,7 +6,6 @@
 package main
 
 import (
-	"fmt"
 	"sync"
 )
 
@@ -31,32 +30,5 @@ func main() {
 		}
 	}()
 
-	for high != nil || low != nil {
-		select {
-		case v, ok := <-high:
-			if !ok {
-				high = nil
-				continue
-			}
-			fmt.Println(v, ok)
-
-		default:
-			select {
-			case v, ok := <-high:
-				if !ok {
-					high = nil
-					continue
-				}
-				fmt.Println(v, ok)
-
-			case v, ok := <-low:
-				if !ok {
-					low = nil
-					continue
-				}
-				fmt.Println(v, ok)
-			}
-		}
-	}
 	wg.Wait()
 }
