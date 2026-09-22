@@ -1,25 +1,18 @@
 package main
 
-import (
-	"fmt"
-	"sync"
-)
+import "fmt"
 
 func main() {
 	high := make(chan int, 10)
 	low := make(chan int, 10)
-	wg := sync.WaitGroup{}
-	wg.Add(2)
 
 	go func() {
-		defer wg.Done()
 		defer close(high)
 		for i := range 10 {
 			high <- i * 20
 		}
 	}()
 	go func() {
-		defer wg.Done()
 		defer close(low)
 		for i := range 10 {
 			low <- i
@@ -33,8 +26,7 @@ func main() {
 				high = nil
 				continue
 			}
-			fmt.Println(v, ok)
-
+			fmt.Println(v)
 		default:
 			select {
 			case v, ok := <-high:
@@ -42,16 +34,15 @@ func main() {
 					high = nil
 					continue
 				}
-				fmt.Println(v, ok)
-
+				fmt.Println(v)
 			case v, ok := <-low:
 				if !ok {
 					low = nil
 					continue
 				}
-				fmt.Println(v, ok)
+				fmt.Println(v)
 			}
 		}
 	}
-	wg.Wait()
+
 }
