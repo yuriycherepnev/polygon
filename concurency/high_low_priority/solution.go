@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func main() {
 	high := make(chan int, 10)
@@ -21,12 +23,12 @@ func main() {
 
 	for high != nil || low != nil {
 		select {
-		case _, ok := <-high:
+		case v, ok := <-high:
 			if !ok {
 				high = nil
 				continue
 			}
-			fmt.Println("aloha")
+			fmt.Println(v)
 		default:
 			select {
 			case v, ok := <-high:
@@ -44,5 +46,4 @@ func main() {
 			}
 		}
 	}
-
 }
