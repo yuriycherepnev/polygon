@@ -21,12 +21,12 @@ func main() {
 
 	for high != nil || low != nil {
 		select {
-		case v, ok := <-high:
+		case _, ok := <-high:
 			if !ok {
 				high = nil
 				continue
 			}
-			fmt.Println(v)
+			fmt.Println("aloha")
 		default:
 			select {
 			case v, ok := <-high:
