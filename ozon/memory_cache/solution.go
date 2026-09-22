@@ -1,8 +1,9 @@
 package main
 
-import "sync"
-
-const shardCount = 16
+import (
+	"fmt"
+	"sync"
+)
 
 type Cache interface {
 	Set(k, v string)
@@ -10,45 +11,32 @@ type Cache interface {
 }
 
 type cache struct {
-	shards [shardCount]shard
-}
-
-type shard struct {
 	mu sync.RWMutex
 	m  map[string]string
 }
 
 func (c *cache) Set(k, v string) {
-	s := c.GetShard(1)
-
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	s.m[k] = v
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.m[k] = v
 }
 
 func (c *cache) Get(k string) (v string, ok bool) {
-	s := c.GetShard(1)
-
-	s.mu.RLock()
-	defer s.mu.RUnlock()
-	v, ok = s.m[k]
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	v, ok = c.m[k]
 	return v, ok
 }
 
-func (c *cache) GetShard(i int) *shard {
-	return &c.shards[i]
-}
-
 func NewCache() Cache {
-	c := &cache{}
-
-	for i := 0; i < shardCount; i++ {
-		c.shards[i].m = make(map[string]string)
+	c := &cache{
+		m: make(map[string]string),
 	}
-
 	return c
 }
 
 func main() {
-
+	mCache := NewCache()
+	mCache.Set("foo", "bar")
+	fmt.Println(mCache.Get("foo"))
 }
