@@ -7,13 +7,7 @@
 
 package main
 
-import (
-	"fmt"
-	"math/rand"
-	"net/http"
-	"time"
-)
-
+/*
 func WeatherForecast() int {
 	time.Sleep(1 * time.Second)
 	return rand.Intn(70) - 30
@@ -28,3 +22,4 @@ func main() {
 		panic(err)
 	}
 }
+*/
