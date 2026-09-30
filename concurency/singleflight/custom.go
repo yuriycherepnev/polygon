@@ -23,7 +23,7 @@ func NewGroup() *Group {
 	}
 }
 
-func (g *Group) Do(key string, fn func() (any, error)) (any, error) {
+func (g *Group) Do(key string, callFunc func() (any, error)) (any, error) {
 	g.mu.Lock()
 
 	if c, ok := g.calls[key]; ok {
@@ -39,7 +39,7 @@ func (g *Group) Do(key string, fn func() (any, error)) (any, error) {
 
 	g.mu.Unlock()
 
-	c.val, c.err = fn()
+	c.val, c.err = callFunc()
 
 	g.mu.Lock()
 	delete(g.calls, key)
@@ -62,10 +62,7 @@ func main() {
 			defer wg.Done()
 
 			result, err := group.Do("user:123", func() (any, error) {
-				fmt.Println(">>> Выполняем тяжёлую операцию")
-
 				time.Sleep(2 * time.Second)
-
 				return "Yuriy", nil
 			})
 
