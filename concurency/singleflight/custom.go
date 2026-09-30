@@ -25,28 +25,20 @@ func NewGroup() *Group {
 
 func (g *Group) Do(key string, callFunc func() (any, error)) (any, error) {
 	g.mu.Lock()
-
 	if c, ok := g.calls[key]; ok {
 		g.mu.Unlock()
 		c.wg.Wait()
 		return c.val, c.err
 	}
 	c := &call{}
-
 	c.wg.Add(1)
-
 	g.calls[key] = c
-
 	g.mu.Unlock()
-
 	c.val, c.err = callFunc()
-
 	g.mu.Lock()
 	delete(g.calls, key)
 	g.mu.Unlock()
-
 	c.wg.Done()
-
 	return c.val, c.err
 }
 

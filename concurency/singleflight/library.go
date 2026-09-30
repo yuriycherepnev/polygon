@@ -10,31 +10,26 @@ import (
 
 func main() {
 	var group singleflight.Group
-	results := make(chan string)
-
 	var wg sync.WaitGroup
 
 	for i := 0; i < 10; i++ {
 		wg.Add(1)
 
-		go func(id int) {
+		go func() {
 			defer wg.Done()
-
 			result, _, _ := group.Do("user:123", func() (any, error) {
-				time.Sleep(2 * time.Second)
-				return "Yuriy", nil
+				num := heavyCalc()
+				return num, nil
 			})
-
-			results <- result.(string)
-		}(i)
+			fmt.Println(result.(int))
+		}()
 	}
 
-	go func() {
-		wg.Wait()
-		close(results)
-	}()
+	wg.Wait()
+}
 
-	for result := range results {
-		fmt.Println(result)
-	}
+func heavyCalc() int {
+	fmt.Println("heavyCalc")
+	time.Sleep(2 * time.Second)
+	return 123
 }
