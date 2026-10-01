@@ -44,26 +44,21 @@ func (g *Group) Do(key string, callFunc func() (any, error)) (any, error) {
 
 func main() {
 	group := NewGroup()
-
-	var wg sync.WaitGroup
+	wg := sync.WaitGroup{}
 
 	for i := 0; i < 10; i++ {
 		wg.Add(1)
-
 		go func(id int) {
 			defer wg.Done()
-
-			result, err := group.Do("user:123", func() (any, error) {
+			result, err := group.Do("key:123", func() (any, error) {
 				time.Sleep(2 * time.Second)
 				return "Yuriy", nil
 			})
-
 			if err != nil {
-				fmt.Println("goroutine", id, "error:", err)
+				fmt.Println(id, err)
 				return
 			}
-
-			fmt.Println("goroutine", id, "result:", result)
+			fmt.Println(id, result)
 		}(i)
 	}
 
