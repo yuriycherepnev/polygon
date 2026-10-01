@@ -12,24 +12,26 @@ func main() {
 	var group singleflight.Group
 	var wg sync.WaitGroup
 
-	for i := 0; i < 10; i++ {
+	for i := range 1000 {
 		wg.Add(1)
-
 		go func() {
 			defer wg.Done()
-			result, _, _ := group.Do("user:123", func() (any, error) {
-				num := heavyCalc()
-				return num, nil
+			result, err, _ := group.Do("user:123", func() (any, error) {
+				num, err := heavyCalc()
+				return num, err
 			})
-			fmt.Println(result.(int))
+			if err != nil {
+				fmt.Println(err)
+			}
+			fmt.Println(result, i)
 		}()
 	}
 
 	wg.Wait()
 }
 
-func heavyCalc() int {
+func heavyCalc() (int, error) {
 	fmt.Println("heavyCalc")
 	time.Sleep(2 * time.Second)
-	return 123
+	return 123, nil
 }
