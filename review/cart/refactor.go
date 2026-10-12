@@ -1,125 +1,77 @@
 package main
 
-/*
 import (
-	"fmt"
-	"net/smtp"
+	"sync"
 )
 
-const vatRate = 10.0
-
-type Product struct {
-	NameOfProduct  string
-	PriceOfProduct float32
+type ProductR struct {
+	Name  string
+	Price int64
 }
 
-type Order struct {
-	Items []Product
+type OrderR struct {
+	Items []ProductR
 }
 
 type Cart struct {
-	Items []Product
+	mu      sync.Mutex
+	items   []ProductR
+	vatRate float64
 }
 
-func NewCart() *Cart {
+func NewCart(vatRate float64) *Cart {
 	return &Cart{
-		Items: make([]Product, 0, 100),
+		items:   make([]ProductR, 0),
+		vatRate: vatRate,
 	}
 }
 
-func NewOrder(cart Cart) *Order {
-	return &Order{
-		Items: cart.Items,
-	}
+func (c *Cart) AddItem(item ProductR) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	c.items = append(c.items, item)
 }
 
-func (c *Cart) AddItem(item Product) {
-	c.Items = append(c.Items, item)
-}
+func (c *Cart) RemoveItem(name string) bool {
+	c.mu.Lock()
+	defer c.mu.Unlock()
 
-func (c *Cart) RemoveItem(nameOfItem string) bool {
-	for i, item := range c.Items {
-		if item.NameOfProduct == nameOfItem {
-			c.Items = append(c.Items[:i], c.Items[i+1:]...)
+	for i, item := range c.items {
+		if item.Name == name {
+			c.items = append(c.items[:i], c.items[i+1:]...)
 			return true
 		}
 	}
+
 	return false
 }
 
-func (c *Cart) CalculateVAT() float64 {
-	subTotal := 0.0
-	for _, item := range c.Items {
-		price := float64(item.PriceOfProduct)
-		subTotal += price
+func (c *Cart) CalculateTotals() (
+	subtotal int64,
+	vat int64,
+	total int64,
+) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	for _, item := range c.items {
+		subtotal += item.Price
 	}
 
-	vatAmount := subTotal * (vatRate / 100)
+	vat = int64(float64(subtotal)*c.vatRate/100 + 0.5)
+	total = subtotal + vat
 
-	return vatAmount
+	return subtotal, vat, total
 }
 
-func (c *Cart) ListAndCalculateVAT() float64 {
-	subTotal := 0.0
-	for _, item := range c.Items {
-		fmt.Printf("Item Name: %s, Item Price: $%.2f\n", item.NameOfProduct, item.PriceOfProduct)
-		subTotal += float64(item.PriceOfProduct)
+func (c *Cart) CreateOrder() OrderR {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	orderItems := append([]ProductR(nil), c.items...)
+
+	return OrderR{
+		Items: orderItems,
 	}
-
-	vatAmount := c.CalculateVAT()
-	totalWithVAT := subTotal + vatAmount
-
-	fmt.Printf("The total price with VAT: $%.2f\n", totalWithVAT)
-
-	return totalWithVAT
 }
-
-func CreateOrder(cart Cart, customerEmail string) *Order {
-	totalPrice := cart.ListAndCalculateVAT()
-
-	orderDetails := "Thank you for your order!\n\n"
-	orderDetails += "Here are the items in your order:\n"
-
-	for _, item := range cart.Items {
-		orderDetails += fmt.Sprintf("- %s: $%.2f\n", item.NameOfProduct, item.PriceOfProduct)
-	}
-
-	orderDetails += fmt.Sprintf("\nTotal (including VAT): $%.2f\n", totalPrice)
-
-	subject := "Your Order Confirmation"
-
-	err := SendOrderConfirmationEmail(customerEmail, subject, orderDetails)
-
-	order := NewOrder(cart)
-
-	if err != nil {
-		fmt.Println("Failed to send order confirmation email:", err)
-	}
-
-	return order
-}
-
-func SendOrderConfirmationEmail(to string, subject string, body string) error {
-	from := "your-email@example.com"
-	password := "your-email-password"
-	smtpHost := "smtp.example.com"
-	smtpPort := "587"
-
-	auth := smtp.PlainAuth("", from, password, smtpHost)
-
-	message := []byte(
-		"Subject: " + subject + "\r\n" +
-			"To: " + to + "\r\n" +
-			"From: " + from + "\r\n" +
-			"\r\n" + body,
-	)
-
-	err := smtp.SendMail(smtpHost+":"+smtpPort, auth, from, []string{to}, message)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-*/
