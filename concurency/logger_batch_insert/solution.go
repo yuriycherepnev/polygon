@@ -16,8 +16,8 @@ import (
 var (
 	msgCh  = make(chan string, 100)
 	batch  = make([]string, 0, 10)
-	wg     = sync.WaitGroup{}
 	ticker = time.NewTicker(2 * time.Second)
+	wg     = sync.WaitGroup{}
 )
 
 func main() {
